@@ -1,0 +1,9 @@
+fastapi==0.109.1
+pytest==7.4.4
+sqlalchemy==2.0.25
+python-jose[cryptography]==3.3.0
+httpx==0.26.0
+uvicorn==0.27.0
+pydantic==2.5.3
+pytest-mock==3.12.0
+allure-pytest
