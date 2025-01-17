@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from api_part_3.src.app import create_app
-from api_part_3.src.models import VALID_TOKENS
+from part_3.src.app import create_app
+from part_3.src.models import VALID_TOKENS
 
 
 @pytest.fixture
