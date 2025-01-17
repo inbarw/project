@@ -30,9 +30,6 @@ cd project
 ```bash
 # For Python implementation
 pip install -r requirements.txt
-
-# For Java implementation
-mvn install
 ```
 
 3. Configure environment variables:
@@ -63,7 +60,7 @@ The PostgreSQL schema for the imported data is dynamically created from CSV file
 # Run all database tests
 pytest part_1/tests/
 
-# Run specific test suite
+# Run specific test (there is just one - in case there are more)
 pytest part_1/tests/test_data_loader_and_export.py
 ```
 
@@ -72,7 +69,7 @@ pytest part_1/tests/test_data_loader_and_export.py
 # Run all API tests
 pytest part_3/tests
 
-# Run performance tests only
+# Run specific test (there is just one - in case there are more)
 pytest part_3/tests/test_medical_records.py
 ```
 
