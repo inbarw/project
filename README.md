@@ -22,8 +22,8 @@ The project implements automated testing for:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/medical-system-qa
-cd medical-system-qa
+git clone https://github.com/inbarw/project
+cd project
 ```
 
 2. Install dependencies:
