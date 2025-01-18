@@ -1,7 +1,7 @@
 import boto3
 import pandas as pd
 
-from part_1.config.config import CONFIG
+from part_1_2.config.config import CONFIG
 
 def get_s3_client():
     return boto3.client(

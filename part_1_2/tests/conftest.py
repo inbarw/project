@@ -1,6 +1,6 @@
 import pytest
 import boto3
-from part_1.src.utils.db_utils import get_db_connection
+from part_1_2.src.utils.db_utils import get_db_connection
 
 @pytest.fixture(scope='function')
 def db_connection():

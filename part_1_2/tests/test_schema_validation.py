@@ -2,10 +2,10 @@ from pathlib import Path
 import allure
 import pytest
 
-from part_1.config.config import CONFIG
-from part_1.src.utils.aws_utils import download_parquet
-from part_1.src.utils.db_utils import fetch_table_schema, compare_schemas
-from part_1.src.utils.file_utils import get_csv_file_paths
+from part_1_2.config.config import CONFIG
+from part_1_2.src.utils.aws_utils import download_parquet
+from part_1_2.src.utils.db_utils import fetch_table_schema, compare_schemas
+from part_1_2.src.utils.file_utils import get_csv_file_paths
 
 @pytest.mark.run(order=3)
 @allure.title("Test Schema Consistency Between DB and S3 Parquet Files")

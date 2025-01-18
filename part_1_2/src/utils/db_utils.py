@@ -1,6 +1,6 @@
 import pandas as pd
 import psycopg2
-from part_1.config.config import CONFIG
+from part_1_2.config.config import CONFIG
 
 def get_db_connection():
     return psycopg2.connect(

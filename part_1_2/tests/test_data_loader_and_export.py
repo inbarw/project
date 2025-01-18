@@ -1,12 +1,12 @@
 import allure
 import pytest
 
-from part_1.config.config import CONFIG
-from part_1.src.data_loader import DataLoader
+from part_1_2.config.config import CONFIG
+from part_1_2.src.data_loader import DataLoader
 from pathlib import Path
-from part_1.src.s3_client import S3Client
-from part_1.src.table_creation import TableCreator
-from part_1.src.utils.file_utils import get_csv_file_paths
+from part_1_2.src.s3_client import S3Client
+from part_1_2.src.table_creation import TableCreator
+from part_1_2.src.utils.file_utils import get_csv_file_paths
 
 @pytest.mark.run(order=1)
 @allure.title("Test Data Loading, Transformation, and Export to S3")

@@ -2,7 +2,7 @@ import csv
 import os
 from typing import List, Tuple
 from pathlib import Path
-from part_1.src.utils.db_utils import get_db_connection
+from part_1_2.src.utils.db_utils import get_db_connection
 
 
 class TableCreator:

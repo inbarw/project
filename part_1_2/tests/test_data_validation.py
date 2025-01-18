@@ -2,10 +2,10 @@ from pathlib import Path
 import allure
 import pandas as pd
 import pytest
-from part_1.config.config import CONFIG
-from part_1.src.utils.aws_utils import download_parquet
-from part_1.src.utils.db_utils import fetch_table_data
-from part_1.src.utils.file_utils import get_csv_file_paths
+from part_1_2.config.config import CONFIG
+from part_1_2.src.utils.aws_utils import download_parquet
+from part_1_2.src.utils.db_utils import fetch_table_data
+from part_1_2.src.utils.file_utils import get_csv_file_paths
 
 @pytest.mark.run(order=2)
 @allure.title("Test Data Consistency Between DB and S3")

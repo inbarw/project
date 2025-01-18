@@ -14,14 +14,15 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - name: Debug Environment Variables
-        run: |
-          echo "DB_HOST: $DB_HOST"
-          echo "DB_NAME: $DB_NAME"
-          echo "DB_USER: $DB_USER"
-          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Use secret AWS credentials
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}  # Use secret DB credentials
           DB_USER: ${{ secrets.DB_USER }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}  # Add DB_NAME secret if used in your code
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}  # Add S3_BUCKET_NAME secret if used in your code
+          run: pytest part_1_2/tests/

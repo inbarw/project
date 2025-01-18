@@ -2,11 +2,11 @@ from pathlib import Path
 import allure
 import pytest
 
-from part_1.config.config import CONFIG
-from part_1.src.utils.aws_utils import download_parquet
-from part_1.src.utils.db_utils import fetch_table_data, fetch_column_names, insert_data, validate_data, update_data, \
+from part_1_2.config.config import CONFIG
+from part_1_2.src.utils.aws_utils import download_parquet
+from part_1_2.src.utils.db_utils import fetch_table_data, fetch_column_names, insert_data, validate_data, update_data, \
     delete_data, fetch_table_schema, generate_sample_values
-from part_1.src.utils.file_utils import get_csv_file_paths
+from part_1_2.src.utils.file_utils import get_csv_file_paths
 
 @pytest.mark.run(order=4)
 @allure.title("Test CRUD Operations: Insert, Read, Update, Delete")

@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 from pathlib import Path
-from part_1.src.utils.db_utils import get_db_connection
+from part_1_2.src.utils.db_utils import get_db_connection
 
 class DataLoader:
     def __init__(self, db_connection=None):

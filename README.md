@@ -67,10 +67,10 @@ The PostgreSQL schema for the imported data is dynamically created from CSV file
 ### Database Validation Tests
 ```bash
 # Run all database tests
-pytest part_1/tests/
+pytest part_1_2/tests/
 
 # Run specific test
-pytest part_1/tests/test_data_loader_and_export.py
+pytest part_1_2/tests/test_data_loader_and_export.py
 ```
 
 ### API Tests
