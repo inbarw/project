@@ -23,6 +23,7 @@ def test_data_loading_and_export(db_connection, s3_client):
             table_name = csv_path.stem
             with allure.step(f"Creating table and loading data from {csv_path}"):
                 table.create_table_from_csv(csv_path)
+                table.clear_table(csv_path) # Clear table in case it's not empty
                 loader.load_csv_to_postgres(csv_path)
 
             table_list.append(table)

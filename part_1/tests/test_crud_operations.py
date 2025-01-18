@@ -8,7 +8,6 @@ from part_1.src.utils.db_utils import fetch_table_data, fetch_column_names, inse
     delete_data, fetch_table_schema, generate_sample_values
 from part_1.src.utils.file_utils import get_csv_file_paths
 
-@pytest.mark.data_validation
 @pytest.mark.run(order=4)
 @allure.title("Test CRUD Operations: Insert, Read, Update, Delete")
 def test_crud_operations(db_connection, s3_client):

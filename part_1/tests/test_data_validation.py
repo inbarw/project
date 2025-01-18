@@ -7,7 +7,6 @@ from part_1.src.utils.aws_utils import download_parquet
 from part_1.src.utils.db_utils import fetch_table_data
 from part_1.src.utils.file_utils import get_csv_file_paths
 
-@pytest.mark.data_validation
 @pytest.mark.run(order=2)
 @allure.title("Test Data Consistency Between DB and S3")
 def test_data_consistency(db_connection, s3_client):
