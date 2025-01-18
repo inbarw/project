@@ -1,131 +1,105 @@
+import pytest
 import allure
-from unittest.mock import patch
+import time
+
 from part_3.src.models import VALID_TOKENS
 
-allure.epic("Medical Records API")
-@allure.feature("Patient Records Management")
-class TestMedicalRecordsAPI:
+VALID_PATIENT_ID = "P12345"
+VALID_PATIENT_NAME = "John Doe"
+VALID_PATIENT_DOB = "1980-01-01"
 
-    @allure.story("Authentication and Authorization")
-    @allure.severity(allure.severity_level.CRITICAL)
-    def test_successful_record_retrieval(self, api_client, valid_headers):
-        """Test successful retrieval of patient records with valid token"""
-        with allure.step("Send GET request to retrieve patient records"):
-            response = api_client.get("/patients/P12345/records", headers=valid_headers)
+@pytest.mark.parametrize(
+    "endpoint, headers, expected_status, expected_detail",
+    [
+        (f"/patients/{VALID_PATIENT_ID}/records", {"Authorization": f"Bearer {VALID_TOKENS['valid_doctor']}"}, 200, None),  # Valid token
+        (f"/patients/{VALID_PATIENT_ID}/records", {}, 403, "Not authenticated"),  # No token
+        (f"/patients/{VALID_PATIENT_ID}/records", {"Authorization": "Bearer invalid_token_123"}, 401, "Invalid authentication token"),  # Invalid token
+        (f"/patients/{VALID_PATIENT_ID}/records", {"Authorization": "InvalidTokenFormat"}, 403, "Not authenticated"),  # Malformed token
+    ],
+)
+@allure.title("Test various authentication scenarios")
+def test_authentication(api_client, endpoint, headers, expected_status, expected_detail):
+    """Test various authentication scenarios."""
+    with allure.step("Send GET request to retrieve patient records"):
+        response = api_client.get(endpoint, headers=headers)
 
-        with allure.step("Verify response status code"):
-            assert response.status_code == 200
+    with allure.step("Verify response status code"):
+        assert response.status_code == expected_status
 
-        with allure.step("Verify response data structure"):
-            data = response.json()
-            assert "patient" in data
-            assert "records" in data
+    if expected_detail:
+        with allure.step("Verify response detail message"):
+            assert expected_detail.lower() in response.json()["detail"].lower()
 
-        with allure.step("Verify patient data"):
-            patient = data["patient"]
-            assert patient["id"] == "P12345"
-            assert patient["name"] == "John Doe"
-            assert patient["dateOfBirth"] == "1980-01-01"
 
-    @allure.story("Authentication and Authorization")
-    @allure.severity(allure.severity_level.BLOCKER)
-    def test_unauthorized_no_token(self, api_client):
-        """Test request without authentication token"""
-        with allure.step("Send GET request without token"):
-            response = api_client.get("/patients/P12345/records")
+@pytest.mark.parametrize(
+    "patient_id, expected_status, expected_detail",
+    [
+        (VALID_PATIENT_ID, 200, None),  # Valid ID
+        ("11", 404, "Patient not found"),  # Non-existent ID
+        ("' OR 1=1", 400, "Invalid patient ID format"),  # SQL Injection-like input
+        ("error", 500, "Database error"),  # Simulated database error
+    ],
+)
+@allure.title("Test error handling for various patient IDs")
+def test_patient_records_error_handling(api_client, valid_headers, patient_id, expected_status, expected_detail):
+    """Test error handling for various patient IDs."""
+    with allure.step(f"Send GET request for patient ID: {patient_id}"):
+        response = api_client.get(f"/patients/{patient_id}/records", headers=valid_headers)
 
-        with allure.step("Verify unauthorized response"):
-            assert response.status_code == 403
-            assert "not authenticated" in response.json()["detail"].lower()
+    with allure.step("Verify response status code"):
+        assert response.status_code == expected_status
 
-    @allure.story("Authentication and Authorization")
-    @allure.severity(allure.severity_level.CRITICAL)
-    def test_unauthorized_invalid_token(self, api_client):
-        """Test request with invalid authentication token"""
-        with allure.step("Send GET request with invalid token"):
-            headers = {"Authorization": "Bearer invalid_token_123"}
-            response = api_client.get("/patients/P12345/records", headers=headers)
+    if expected_detail:
+        with allure.step("Verify response detail message"):
+            assert response.json()["detail"] == expected_detail
 
-        with allure.step("Verify unauthorized response"):
-            assert response.status_code == 401
-            assert "invalid authentication token" in response.json()["detail"].lower()
+@allure.title("Test API response time for retrieving patient records")
+def test_response_time(api_client, valid_headers):
+    """Test API response time for retrieving patient records."""
+    with allure.step("Send GET request and measure response time"):
+        start_time = time.time()
+        response = api_client.get(f"/patients/{VALID_PATIENT_ID}/records", headers=valid_headers)
+        end_time = time.time()
 
-    @allure.story("Authentication and Authorization")
-    @allure.severity(allure.severity_level.CRITICAL)
-    def test_unauthorized_malformed_token(self, api_client):
-        """Test request with malformed authentication token"""
-        with allure.step("Send GET request with malformed token"):
-            headers = {"Authorization": "InvalidTokenFormat"}
-            response = api_client.get("/patients/P12345/records", headers=headers)
+    with allure.step("Verify response time and status"):
+        assert response.status_code == 200
+        response_time = end_time - start_time
+        allure.attach(
+            str(response_time),
+            name="Response Time (seconds)",
+            attachment_type=allure.attachment_type.TEXT,
+        )
+        assert response_time < 1.0
 
-        with allure.step("Verify unauthorized response"):
-            assert response.status_code == 403
-            assert "not authenticated" in response.json()["detail"].lower()
+@allure.title("Test access with different role tokens")
+@pytest.mark.parametrize("role", ["valid_admin", "valid_nurse", "valid_doctor"])
+def test_different_roles_access(api_client, role):
+    """Test access with different role tokens."""
+    with allure.step(f"Send GET request with {role} token"):
+        token = VALID_TOKENS.get(role)  # Get the corresponding token for each role
+        headers = {"Authorization": f"Bearer {token}"}
+        response = api_client.get(f"/patients/{VALID_PATIENT_ID}/records", headers=headers)
 
-    @allure.story("Authentication and Authorization")
-    @allure.severity(allure.severity_level.NORMAL)
-    def test_different_roles_access(self, api_client):
-        """Test access with different role tokens"""
-        for role, token in VALID_TOKENS.items():
-            with allure.step(f"Send GET request with {role} token"):
-                headers = {"Authorization": f"Bearer {token}"}
-                response = api_client.get("/patients/P12345/records", headers=headers)
+    with allure.step(f"Verify response status for role {role}"):
+        assert response.status_code == 200, f"Access failed for role: {role}"
 
-            with allure.step(f"Verify response status for role {role}"):
-                assert response.status_code == 200, f"Failed for role: {role}"
+@allure.title("Test response data structure for retrieving patient records")
+def test_response_data_structure(api_client, valid_headers):
+    """
+    Test the correctness of the response data structure for a valid request.
+    """
+    with allure.step("Send GET request to retrieve patient records"):
+        response = api_client.get(f"/patients/{VALID_PATIENT_ID}/records", headers=valid_headers)
 
-    @allure.story("Error Handling")
-    @allure.severity(allure.severity_level.NORMAL)
-    def test_patient_not_found(self, api_client, valid_headers):
-        """Test handling of non-existent patient ID"""
-        with allure.step("Send GET request with non-existent patient ID"):
-            response = api_client.get("/patients/invalid/records", headers=valid_headers)
+    with allure.step("Verify response status code"):
+        assert response.status_code == 200, "Unexpected status code"
 
-        with allure.step("Verify patient not found response"):
-            assert response.status_code == 404
-            assert response.json()["detail"] == "Patient not found"
+    with allure.step("Verify response data structure"):
+        data = response.json()
+        assert "patient" in data, "'patient' key missing in response"
+        assert "records" in data, "'records' key missing in response"
 
-    @allure.story("Error Handling")
-    @allure.severity(allure.severity_level.NORMAL)
-    def test_database_error(self, api_client, valid_headers):
-        """Test handling of database errors"""
-        with allure.step("Send GET request to simulate database error"):
-            response = api_client.get("/patients/error/records", headers=valid_headers)
-
-        with allure.step("Verify database error response"):
-            assert response.status_code == 500
-            assert response.json()["detail"] == "Database error"
-
-    @allure.story("Performance")
-    @allure.severity(allure.severity_level.NORMAL)
-    @patch("time.time")
-    def test_response_time(self, mock_time, api_client, valid_headers):
-        """Test API response time using mocked time"""
-        start_time = 0
-        end_time = 0.5
-        mock_time.side_effect = [start_time, end_time, end_time + 1]
-
-        with allure.step("Send GET request and measure response time"):
-            response = api_client.get("/patients/P12345/records", headers=valid_headers)
-
-        with allure.step("Verify response time is within acceptable range"):
-            assert response.status_code == 200
-            response_time = end_time - start_time
-            allure.attach(
-                str(response_time),
-                name="Response Time (seconds)",
-                attachment_type=allure.attachment_type.TEXT
-            )
-            assert response_time < 1.0
-
-    @allure.story("Security")
-    @allure.severity(allure.severity_level.CRITICAL)
-    def test_sql_injection_prevention(self, api_client, valid_headers):
-        """Test that SQL injection attempts are handled safely"""
-        with allure.step("Send GET request with malicious SQL injection"):
-            malicious_id = "P12345'; DROP TABLE patients; --"
-            response = api_client.get(f"/patients/{malicious_id}/records", headers=valid_headers)
-
-        with allure.step("Verify request is rejected"):
-            assert response.status_code == 400
-            assert "Invalid patient ID format" in response.json()["detail"]
+        patient = data["patient"]
+        assert patient["id"] == VALID_PATIENT_ID, "Incorrect patient ID"
+        assert patient["name"] == VALID_PATIENT_NAME, "Incorrect patient name"
+        assert patient["dateOfBirth"] == VALID_PATIENT_DOB, "Incorrect patient date of birth"

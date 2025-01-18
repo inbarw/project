@@ -27,11 +27,4 @@ class S3Client:
         is_uploaded = any(obj['Key'] == s3_object_key for obj in s3_objects)
         return is_uploaded
 
-    def get_file_content(self, s3_object_key):
-        """
-        Downloads and returns the content of a file from S3.
-        """
-        response = self.s3_client.get_object(Bucket=self.bucket_name, Key=s3_object_key)
-        file_content = response['Body'].read()
-        print(f"Downloaded content from '{s3_object_key}' in S3 bucket '{self.bucket_name}'.")
-        return file_content
+

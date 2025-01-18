@@ -17,7 +17,16 @@ The project implements automated testing for:
 - PostgreSQL (version 13 or higher)
 - Python 
 - AWS CLI configured with appropriate credentials
-
+  ```bash
+  # Install AWS CLI using Homebrew
+  brew install awscli
+  ```
+  - Allure Framework for test reporting
+  ```bash
+  # Install AWS CLI using Homebrew
+  brew install allure
+  ```
+  
 ## Installation
 
 1. Clone the repository:
@@ -60,7 +69,7 @@ The PostgreSQL schema for the imported data is dynamically created from CSV file
 # Run all database tests
 pytest part_1/tests/
 
-# Run specific test (there is just one - in case there are more)
+# Run specific test
 pytest part_1/tests/test_data_loader_and_export.py
 ```
 
@@ -75,7 +84,7 @@ pytest part_3/tests/test_medical_records.py
 
 ### Generate Test Report
 ```bash
-run_tests.sh
+./run_tests.sh
 ```
 
 ## Test Reports
