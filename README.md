@@ -13,19 +13,7 @@ The project implements automated testing for:
 
 ## Prerequisites
 
-- AWS Account with appropriate permissions
-- PostgreSQL (version 13 or higher)
-- Python 
-- AWS CLI configured with appropriate credentials
-  ```bash
-  # Install AWS CLI using Homebrew
-  brew install awscli
-  ```
-- Allure Framework for test reporting
-  ```bash
-  # Install AWS CLI using Homebrew
-  brew install allure
-  ```
+- Python 3.10
   
 ## Installation
 
@@ -40,8 +28,11 @@ cd project
 # For Python implementation
 pip install -r requirements.txt
 ```
-
-3. Configure environment variables:
+3. Set Up Allure Framework for Test Reporting
+```bash
+brew install allure
+```
+4. Configure environment variables:
 ```bash
 cp .env.example .env
 # Edit .env with your credentials and configuration
