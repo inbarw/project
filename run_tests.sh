@@ -8,7 +8,7 @@ rm -rf ./test_results/allure-report/*
 mkdir -p ./test_results/allure-results
 mkdir -p ./test_results/allure-report
 
-# Run tests with Allure
+# Run tests
 pytest
 
 # Generate Allure report

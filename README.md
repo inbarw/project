@@ -21,7 +21,7 @@ The project implements automated testing for:
   # Install AWS CLI using Homebrew
   brew install awscli
   ```
-  - Allure Framework for test reporting
+- Allure Framework for test reporting
   ```bash
   # Install AWS CLI using Homebrew
   brew install allure
@@ -49,42 +49,45 @@ cp .env.example .env
 
 ## Running Tests
 
-### Database Validation Tests
-```bash
-# Run all database tests
-pytest part_1_2/tests/
+### Task 1: Database Validation Tests
+These tests validate the integrity of data between PostgreSQL and S3, along with CRUD operations.
 
-# Run specific test
+#### Run All Database Tests
+```bash
+pytest part_1_2/tests/
+```
+#### Run Specific Database Test (e.g., Data Loader and Export)
+```bash
 pytest part_1_2/tests/test_data_loader_and_export.py
 ```
 
-### API Tests
+### Task 2: API Tests
+These tests validate the API endpoints of the medical system, ensuring that the API behaves as expected.
+#### Run API test
 ```bash
-# Run all API tests
 pytest part_3/tests
-
-# Run specific test (there is just one - in case there are more)
-pytest part_3/tests/test_medical_records.py
 ```
 
-### Generate Test Report
+### Task 3: Generate Test Report
+After running the tests, you can generate and view the Allure report for detailed results.
 ```bash
 ./run_tests.sh
 ```
+This will run all the tests and generate an Allure report.
+
 
 ## Test Reports
+The test reports are generated using the Allure Framework and contain the following information:
+- **Test Execution Summary**: Overview of the tests run, including passed/failed tests.
+- **Data Validation Results**: Status of data consistency tests.
+- **API Test Results**: Status of API endpoint validation tests.
+- **Duration of Each Test**: Performance details for each test.
+- **Error Details**: Information on any test failures or issues.
 
-- Reports are generated using Allure Framework
-- Reports include:
-  - Test execution summary
-  - Data validation results
-  - API response times
-  - Error details
 
 ## CI/CD Integration
-
 This project includes GitHub Actions workflows for automated testing:
-- `.data-integrity-check.yml`: Runs all tests on push requests
+- `.data-integrity-check.yml`: Runs part 1 and 2 tests on push requests
 
 ## Troubleshooting
 
@@ -100,29 +103,49 @@ Common issues and solutions:
    - Check IAM permissions for S3 access
    - Validate S3 bucket existence and permissions
 
-## Task info
-* I know that there are methods/design that can be improved/duplicate of code, but I'm not that familiar with s3/db/mock, and because there is limited time, there are parts that I focused on the functionality, in order the test to run/pass 
+## Task Information
+**Note** I acknowledge that there are opportunities to improve the methods and design, such as addressing code duplication and enhancing error handling. However, due to my limited experience with S3, databases, and mocking, as well as time constraints, my primary focus has been on ensuring the functionality works correctly and the tests pass.
+## Part 1: Environment Setup and Data Preparation
 
-### Part 1: Environment Setup and Data Preparation
+### Overview
+The PostgreSQL schema for imported data is dynamically created from CSV files. This process involves parsing CSV files, inferring column types (e.g., INT, FLOAT, DATE, VARCHAR(255)), and creating tables in PostgreSQL.
 
-The PostgreSQL schema for the imported data is dynamically created from CSV files. The following steps describe the schema generation process:
-1. CSV File Parsing: The program reads CSV files, infers column types (INT, FLOAT, DATE, or VARCHAR(255)), and uses this information to create the schema for each table.
-2. Table Creation: A table is created in PostgreSQL using the inferred column types. The table name corresponds to the CSV file name (without the .csv extension).
-3. Column Type Inference: The column data types are determined based on the first few rows in the CSV file. The following rules are applied:
-   * INT: For columns containing integer values.
-   * FLOAT: For columns containing floating-point values.
-   * DATE: For columns containing dates in YYYY-MM-DD format.
-   * VARCHAR(255): For columns with other or inconsistent data types.
-   
-* Test for loading the data and export to s3 is test_data_loader_and_export.py
-* I know that lab_results.csv isn't is missing from the uploaded file, it required handling special data, and I didn't get to this 
+### Process:
+1. **CSV File Parsing**: The program reads CSV files and infers column types based on the first few rows.
+2. **Table Creation**: Corresponding tables are created in PostgreSQL based on the CSV data.
+3. **Column Type Inference**:
+   - **INT**: For columns containing integers.
+   - **FLOAT**: For columns containing floating-point values.
+   - **DATE**: For columns containing date values in `YYYY-MM-DD` format.
+   - **VARCHAR(255)**: For other data types or inconsistent data.
+
+### Test for Data Loading and Export to S3
+- **Test File**: `test_data_loader_and_export.py`
+- This test ensures that data is correctly loaded into the database and exported to S3.
+
+**Note**: There is a missing `lab_results.csv` file, which requires special data handling. This file was not included in the current implementation.
+
+---
 
 ## Part 2: Database and Data Validation Tests
-* Tests for data validation: test_data_validation.py, test_schema_validation.py and test_crud_operations.py
-* Tests with part 1 test aren't by order (using @pytest.mark.run(order=)), to ensure that part 1 test (load and export to s3) will run first
-* I know that there is code duplication in all the tests, also the design of the class/method can be improved
+
+These tests focus on validating the data consistency between PostgreSQL and S3, including checking the schema and performing CRUD operations.
+
+### Test Files:
+- `test_data_validation.py`
+- `test_schema_validation.py`
+- `test_crud_operations.py`
+
+### Execution Order:
+The tests in part 2 are executed after the data has been loaded and exported to S3. The execution order is controlled using `@pytest.mark.run(order=)` to ensure the `test_data_loader_and_export.py` test runs first.
+
+---
 
 ## Part 3: API Tests
-* Test for api test_medical_records.py
 
+The API tests ensure that the medical system's API endpoints function as expected. They test various scenarios such as retrieving medical records, handling errors, and validating response formats.
+
+### Test File:
+- `test_medical_records.py`
+- This test file validates the functionality of the medical records API.
 
