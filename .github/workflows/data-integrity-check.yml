@@ -23,4 +23,4 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: pytest part_1/tests/ -m data_validation
+        run: pytest part_1/tests/
