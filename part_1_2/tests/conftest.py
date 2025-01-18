@@ -15,4 +15,4 @@ def s3_client():
     """Fixture for setting up and tearing down the S3 client."""
     s3 = boto3.client('s3')  # Initialize the S3 client
     yield s3  # This will provide the S3 client to the test function
-    print("S3 client cleaned up.")
+

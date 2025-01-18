@@ -24,7 +24,6 @@ def fetch_table_data(connection, table_name):
     query = f"SELECT * FROM {table_name}"
     return pd.read_sql_query(query, connection)
 
-
 def normalize_schema(db_schema, parquet_schema):
     """
     Normalize the data types in both schemas for comparison.
